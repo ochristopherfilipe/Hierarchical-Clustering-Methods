@@ -1,4 +1,4 @@
-# Explorando Hierarchical Clustering Methods: Uma Jornada com Pinguins
+# Explorando Hierarchical Clustering Methods
 
 Agrupamento hierárquico é uma técnica poderosa para entender a estrutura interna de conjuntos de dados complexos. Neste artigo, embarcaremos em uma jornada prática pelo mundo dos métodos hierárquicos de agrupamento, utilizando a linguagem de programação Python e as bibliotecas scikit-learn e scipy.
 
