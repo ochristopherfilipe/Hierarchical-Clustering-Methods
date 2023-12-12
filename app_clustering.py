@@ -157,6 +157,9 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
                     df_pad[df_pad.columns[-len(variaveis_cat)+1:]] = df_pad[df_pad.columns[-len(variaveis_cat)+1:]].astype(int)
 
+                    # Converta a coluna 'Weekend' para numérica
+                    df_pad['Weekend'] = df_pad['Weekend'].astype(int)
+
                     st.write(df_pad.dtypes)
 
                     # Verifique e trate valores ausentes se houver
