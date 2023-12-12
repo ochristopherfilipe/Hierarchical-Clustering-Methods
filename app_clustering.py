@@ -99,20 +99,20 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 st.subheader("Após a exclusão de valores ausentes:")
                 st.write(df.isnull().sum())
 
-        # Lista de variáveis
-        variaveis = ['Administrative', 'Administrative_Duration', 'Informational', 
-                    'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration', 
-                    'SpecialDay', 'Month', 'Weekend']
-        variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational', 
-                        'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
-        variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
-
-        st.markdown("---")
-
-        st.subheader("Padronizando as colunas")
-
-        # Criar DataFrame auxiliar
-        df_pad = criar_df_auxiliar(df)
+                # Lista de variáveis
+                variaveis = ['Administrative', 'Administrative_Duration', 'Informational', 
+                            'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration', 
+                            'SpecialDay', 'Month', 'Weekend']
+                variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational', 
+                                'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
+                variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
+        
+                st.markdown("---")
+        
+                st.subheader("Padronizando as colunas")
+        
+                # Criar DataFrame auxiliar
+                df_pad = criar_df_auxiliar(df)
 
         # Exibir nomes das colunas
         st.write("Nomes das Colunas no DataFrame Transformado:")
