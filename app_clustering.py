@@ -214,7 +214,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     with tab5:
         st.title('Elbow Method')
 
-        with st.spinner('Aguarde enquanto o modelo é gerado! Isso pode levar alguns minutos...'):
+        with st.spinner('Aguarde enquanto o modelo é gerado! Isso pode levar alguns minutos'):
             time.sleep(120)  # Exemplo de código que demora 5 segundos
 
 
@@ -290,7 +290,6 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
                         st.markdown('---')
 
-                        st.suhbeader("Construindo um modelo com o número ótimo de clusters definido pelo Elbow Method")
                         st.write("Identificamos o ponto de cotovelo no 'Elbow Method', selecionando 11 clusters para uma segmentação eficiente dos dados na análise de clustering")
 
                         # Encontrar o índice do ponto de cotovelo
