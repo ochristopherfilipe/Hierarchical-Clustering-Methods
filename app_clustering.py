@@ -138,6 +138,9 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     with tab4:
         st.title('Modelo De Clustering')
 
+        if file is not None:
+            df = uploaded_file(file)
+            
         variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
                         'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
         variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
@@ -149,7 +152,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
             df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
             return df_pad
         
-        df = pd.read_csv('online_shoppers_intention.csv')
+        
                 
         # Criar DataFrame auxiliar
         df_pad = criar_df_auxiliar(df)
