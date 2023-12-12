@@ -162,6 +162,9 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         if not np.issubdtype(df_pad.dtypes, np.number):
                             st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
                         else:
+
+                            st.write(df_pad.dtypes)
+                                     
                             df_pad['Weekend'] = df_pad['Weekend'].astype(int, inplace=True)
                                 
                             scaler = StandardScaler()
