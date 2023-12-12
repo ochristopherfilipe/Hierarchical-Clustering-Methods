@@ -15,12 +15,6 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 def uploaded_file(file):
     return pd.read_csv(file, infer_datetime_format=True, parse_dates=['Month'])
 
-@st.cache_data
-def cluster_model(df_pad_scaled):
-    kmeans = KMeans(n_clusters=11, random_state=42, n_init=10)
-    kmeans.fit(df_pad_scaled)
-    return kmeans.labels_
-
 
 # Configuração da página
 def main():
@@ -194,47 +188,77 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
         with tab5:
             st.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
 
-            # Inicializa uma lista para armazenar as variabilidades intra-cluster para diferentes números de clusters
-            inertia = []
+            df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
 
-            # Chama a função para obter os rótulos do modelo KMeans
-            labels = cluster_model(df_pad_scaled)
+            if file is not None:
+                df = uploaded_file(file)
 
+                if not df.empty:  # Certifique-se de que o DataFrame não está vazio
+                    variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
+                                    'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
+                    variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
 
-            # Plota o gráfico do método do cotovelo
-            st.pyplot(plt.figure(figsize=(10, 6)))
-            plt.plot(range(1, 30), inertia, marker='o')
-            plt.xlabel('Número de Clusters')
-            plt.ylabel('Inércia (Variabilidade Intra-cluster)')
-            plt.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
+                    # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
+                    df_pad[variaveis_qtd] = df[variaveis_qtd]
+                    df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
 
-            # Encontrar o índice do ponto de cotovelo
-            elbow_index = 11  
-            plt.axvline(x=elbow_index + 1, color='red', linestyle='--', label='Ponto de Cotovelo')  # +1 porque o índice começa em 0
+                    # Verifique e trate valores ausentes se houver
+                    if df_pad.isnull().sum().any():
+                        st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
+                    else:
+                        # Verifique e trate valores não numéricos se houver
+                        if not np.issubdtype(df_pad.dtypes, np.number):
+                            st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
+                        else:
+                            scaler = StandardScaler()
+                            df_pad_scaled = scaler.fit_transform(df_pad)
 
-            plt.legend()
-            st.pyplot(plt)
+                            # Inicializa uma lista para armazenar as variabilidades intra-cluster para diferentes números de clusters
+                            inertia = []
 
-            # Configura o modelo KMeans com 11 clusters e uma semente aleatória para reprodutibilidade
-            kmeans = KMeans(n_clusters=11, random_state=42, n_init=10)
+                            # Testa diferentes números de clusters (de 1 a 29) e calcula a variabilidade intra-cluster (inertia) para cada um
+                            for k in range(1, 30):
+                                # Configura o modelo KMeans com o número atual de clusters e uma semente aleatória para reprodutibilidade
+                                kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # Defina n_init explicitamente
+                                # Ajusta o modelo aos dados padronizados
+                                kmeans.fit(df_pad_scaled)
+                                # Armazena a variabilidade intra-cluster na lista
+                                inertia.append(kmeans.inertia_)
 
-            # Ajusta o modelo aos dados padronizados
-            kmeans.fit(df_pad_scaled)
+                            # Plota o gráfico do método do cotovelo
+                            st.pyplot(plt.figure(figsize=(10, 6)))
+                            plt.plot(range(1, 30), inertia, marker='o')
+                            plt.xlabel('Número de Clusters')
+                            plt.ylabel('Inércia (Variabilidade Intra-cluster)')
+                            plt.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
 
-            # Adiciona a coluna 'grupo' ao DataFrame original 'df'
-            df['grupo'] = kmeans.labels_
+                            # Encontrar o índice do ponto de cotovelo
+                            elbow_index = 11  
+                            plt.axvline(x=elbow_index + 1, color='red', linestyle='--', label='Ponto de Cotovelo')  # +1 porque o índice começa em 0
 
-            # Crosstab
-            crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+                            plt.legend()
+                            st.pyplot(plt)
 
-            # Gráfico de barras agrupadas
-            st.pyplot(plt.figure(figsize=(10, 6)))
-            crosstab_result.plot(kind='bar', colormap='viridis')
-            plt.title('Distribuição dos Grupos por Receita')
-            plt.xlabel('Receita')
-            plt.ylabel('Contagem')
-            plt.legend(title='Grupo', bbox_to_anchor=(1.05, 1), loc='upper left')
-            st.pyplot(plt)
+                            # Configura o modelo KMeans com 11 clusters e uma semente aleatória para reprodutibilidade
+                            kmeans = KMeans(n_clusters=11, random_state=42, n_init=10)
+
+                            # Ajusta o modelo aos dados padronizados
+                            kmeans.fit(df_pad_scaled)
+
+                            # Adiciona a coluna 'grupo' ao DataFrame original 'df'
+                            df['grupo'] = kmeans.labels_
+
+                            # Crosstab
+                            crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+
+                            # Gráfico de barras agrupadas
+                            st.pyplot(plt.figure(figsize=(10, 6)))
+                            crosstab_result.plot(kind='bar', colormap='viridis')
+                            plt.title('Distribuição dos Grupos por Receita')
+                            plt.xlabel('Receita')
+                            plt.ylabel('Contagem')
+                            plt.legend(title='Grupo', bbox_to_anchor=(1.05, 1), loc='upper left')
+                            st.pyplot(plt)
         
 # Roda o aplicativo
 if __name__ == "__main__":
