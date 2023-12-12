@@ -63,7 +63,12 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     st.markdown("---")
     # Configuração das abas
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Carregando O Arquivo", "Tratamento Os Dados", "Gráficos", "Modelo De Clustering", "Método Do Cotovelo"])
-
+    def criar_df_auxiliar(df):
+        df_pad = pd.DataFrame()
+        df_pad[variaveis_qtd] = df[variaveis_qtd]
+        df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+        return df_pad
+        
     with tab1:
         st.write('Carregando O Arquivo')
         file = st.file_uploader("Escolha um arquivo CSV", type=["csv"])
@@ -105,12 +110,6 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
         st.markdown("---")
 
         st.subheader("Padronizando as colunas")
-
-        def criar_df_auxiliar(df):
-            df_pad = pd.DataFrame()
-            df_pad[variaveis_qtd] = df[variaveis_qtd]
-            df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
-            return df_pad
 
         # Criar DataFrame auxiliar
         df_pad = criar_df_auxiliar(df)
