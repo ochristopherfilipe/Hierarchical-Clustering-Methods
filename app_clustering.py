@@ -136,21 +136,24 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 sns.countplot(data=df, x=column)
                 plt.title(f'Distribuição de {column}')
                 st.pyplot(plt)
-     
-    with tab4:
-        st.title('Modelo De Clustering')
-
-        if file is not None:
-            df = uploaded_file(file)
             
-        variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
-                        'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
-        variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
-        
-        df_pad = pd.DataFrame()
-        df_pad[variaveis_qtd] = df[variaveis_qtd]
-        df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)        
-    
+        with tab4:
+            st.title('Modelo De Clustering')
+
+            df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
+
+            if file is not None:
+                df = uploaded_file(file)
+
+                if not df.empty:  # Certifique-se de que o DataFrame não está vazio
+                    variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
+                                    'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
+                    variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
+
+                    # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
+                    df_pad[variaveis_qtd] = df[variaveis_qtd]
+                    df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+
 
         scaler = StandardScaler()
         df_pad_scaled = scaler.fit_transform(df_pad)
