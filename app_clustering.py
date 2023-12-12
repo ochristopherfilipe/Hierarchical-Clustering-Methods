@@ -264,7 +264,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                             inertia.append(kmeans.inertia_)
 
                         # Plota o gráfico do método do cotovelo
-                        st.pyplot(plt.figure(figsize=(10, 6)))
+                        plt.figure(figsize=(10, 6))
                         plt.plot(range(1, 30), inertia, marker='o')
                         plt.xlabel('Número de Clusters')
                         plt.ylabel('Inércia (Variabilidade Intra-cluster)')
@@ -290,7 +290,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
 
                         # Gráfico de barras agrupadas
-                        st.pyplot(plt.figure(figsize=(10, 6)))
+                        plt.figure(figsize=(10, 6))
                         crosstab_result.plot(kind='bar', colormap='viridis')
                         plt.title('Distribuição dos Grupos por Receita')
                         plt.xlabel('Receita')
