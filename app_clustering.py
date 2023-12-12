@@ -70,7 +70,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
         file = st.file_uploader("Escolha um arquivo CSV", type=["csv"])
 
         # Link abaixo do botão para baixar o dataset
-        st.write("[Link para baixar o arquivo de dados](https://github.com/ochristopherfilipe/RFV)")
+        st.write("[Link para baixar o arquivo de dados](https://github.com/ochristopherfilipe/Hierarchical-Clustering-Methods)")
 
 
     with tab2:
