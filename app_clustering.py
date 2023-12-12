@@ -72,9 +72,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
         st.title('Tratamento Dos Dados')
 
         if file is not None:
-            # Attempt to read the CSV file
             df = uploaded_file(file)
-            # Check if the DataFrame is empty
             if df.empty:
                 st.warning("O arquivo está vazio.")
             else:
@@ -225,10 +223,6 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
             plt.legend(title='Grupo', bbox_to_anchor=(1.05, 1), loc='upper left')
             st.pyplot(plt)
         
-
-
-
-
 # Roda o aplicativo
 if __name__ == "__main__":
     main()
