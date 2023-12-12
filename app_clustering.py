@@ -15,6 +15,12 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 def uploaded_file(file):
     return pd.read_csv(file, infer_datetime_format=True, parse_dates=['Month'])
 
+@st.cache_data
+def cluster_model(df_pad_scaled):
+    kmeans = KMeans(n_clusters=11, random_state=42, n_init=10)
+    kmeans.fit(df_pad_scaled)
+    return kmeans.labels_
+
 
 # Configuração da página
 def main():
@@ -191,14 +197,9 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
             # Inicializa uma lista para armazenar as variabilidades intra-cluster para diferentes números de clusters
             inertia = []
 
-            # Testa diferentes números de clusters (de 1 a 29) e calcula a variabilidade intra-cluster (inertia) para cada um
-            for k in range(1, 30):
-                # Configura o modelo KMeans com o número atual de clusters e uma semente aleatória para reprodutibilidade
-                kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # Defina n_init explicitamente
-                # Ajusta o modelo aos dados padronizados
-                kmeans.fit(df_pad_scaled)
-                # Armazena a variabilidade intra-cluster na lista
-                inertia.append(kmeans.inertia_)
+            # Chama a função para obter os rótulos do modelo KMeans
+            labels = cluster_model(df_pad_scaled)
+
 
             # Plota o gráfico do método do cotovelo
             st.pyplot(plt.figure(figsize=(10, 6)))
