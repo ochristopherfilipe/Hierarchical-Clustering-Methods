@@ -154,6 +154,8 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     df_pad[variaveis_qtd] = df[variaveis_qtd]
                     df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
 
+                    st.write(df_pad.head())
+
                     # Verifique e trate valores ausentes se houver
                     if df_pad.isnull().sum().any():
                         st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
