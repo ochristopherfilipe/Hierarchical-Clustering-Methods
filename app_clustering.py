@@ -214,7 +214,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
         st.title('Elbow Method')
 
         with st.spinner('Aguarde enquanto o modelo é gerado! Isso pode levar alguns minutos'):
-            time.sleep(120)  # Exemplo de código que demora 5 segundos
+            time.sleep(300)  # Exemplo de código que demora 5 segundos
 
 
         df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
