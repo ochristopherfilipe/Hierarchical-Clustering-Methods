@@ -62,7 +62,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     st.markdown("---")
     st.markdown("---")
     # Configuração das abas
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Carregando O Arquivo", "Tratamento Os Dados", "Gráficos", "Modelo De Clustering", "Método Do Cotovelo"])
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Carregando O Arquivo", "Tratamento Dos Dados", "Gráficos", "Modelo De Clustering", "Elbow Method"])
 
         
     with tab1:
@@ -85,7 +85,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 missing_values = df.isnull().sum()
 
                 # Exibir as variáveis com valores ausentes, se houver
-                st.subheader("Valores Ausentes:")
+                st.subheader("Total De Valores Ausentes:")
                 st.write(missing_values[missing_values > 0])
 
                 # Excluir linhas com valores ausentes
@@ -207,7 +207,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
 
     with tab5:
-        st.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
+        st.title('Elbow Method')
 
         df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
 
@@ -238,6 +238,12 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
                 df_pad['Weekend'] = df_pad['Weekend'].astype(int)
 
+                st.markdown('---')
+
+                st.subheader('Escolhendo o melhor número de Clusters')
+                
+                st.write('Verificando Colunas')
+
                 st.write(df_pad.head())
 
                 # Verifique e trate valores ausentes se houver
@@ -263,12 +269,20 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                             # Armazena a variabilidade intra-cluster na lista
                             inertia.append(kmeans.inertia_)
 
-                        # Plota o gráfico do método do cotovelo
+
+                        st.markdown('---')
+
+                        # Plota o gráfico do Elbow Method
                         plt.figure(figsize=(10, 6))
                         plt.plot(range(1, 30), inertia, marker='o')
                         plt.xlabel('Número de Clusters')
                         plt.ylabel('Inércia (Variabilidade Intra-cluster)')
-                        plt.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
+                        plt.title('Elbow Method para Determinar o Número Ótimo de Clusters')
+
+                        st.markdown('---')
+
+                        st.suhbeader("Construindo um modelo com o número ótimo de clusters definido pelo Elbow Method")
+                        st.write("Identificamos o ponto de cotovelo no 'Elbow Method', selecionando 11 clusters para uma segmentação eficiente dos dados na análise de clustering")
 
                         # Encontrar o índice do ponto de cotovelo
                         elbow_index = 11  
