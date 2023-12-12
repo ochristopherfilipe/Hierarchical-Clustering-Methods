@@ -152,8 +152,10 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
                     # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
                     df_pad[variaveis_qtd] = df[variaveis_qtd]
+
+                    # Adicione este trecho para converter as colunas criadas por pd.get_dummies para int
                     df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
-                    df_pad['Weekend'] = df_pad['Weekend'].astype(int)
+                    df_pad[df_pad.columns[-len(variaveis_cat)+1:]] = df_pad[df_pad.columns[-len(variaveis_cat)+1:]].astype(int)
 
                     st.write(df_pad.dtypes)
 
