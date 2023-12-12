@@ -154,6 +154,8 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     df_pad[variaveis_qtd] = df[variaveis_qtd]
                     df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
 
+                    st.write(df_pad.dtypes)
+
                     # Verifique e trate valores ausentes se houver
                     if df_pad.isnull().sum().any():
                         st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
@@ -162,8 +164,6 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         if not np.issubdtype(df_pad.dtypes, np.number):
                             st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
                         else:
-
-                            st.write(df_pad.dtypes)
                                      
                             df_pad['Weekend'] = df_pad['Weekend'].astype(int, inplace=True)
                                 
