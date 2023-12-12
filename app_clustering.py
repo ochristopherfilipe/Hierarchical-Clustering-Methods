@@ -181,7 +181,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
                 else:
                     # Verifique e trate valores não numéricos se houver
-                    if not np.issubdtype(df_pad.dtypes, np.number):
+                    if np.issubdtype(df_pad.dtypes, np.number):
                         st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
                     else:                                
                         scaler = StandardScaler()
