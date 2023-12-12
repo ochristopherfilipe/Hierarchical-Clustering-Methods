@@ -214,7 +214,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     with tab5:
         st.title('Elbow Method')
 
-        with st.spinner('Aguardando...'):
+        with st.spinner('Aguarde enquanto o modelo é gerado! Isso pode levar alguns minutos...'):
             time.sleep(120)  # Exemplo de código que demora 5 segundos
 
 
