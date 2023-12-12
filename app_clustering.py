@@ -170,7 +170,9 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
                     return df
 
-                df_pad = converter_dados(df_pad)            
+                df_pad = converter_dados(df_pad)    
+
+                df_pad['Weekend'] = df_pad['Weekend'].astype(int)
 
                 st.write(df_pad.dtypes)
 
