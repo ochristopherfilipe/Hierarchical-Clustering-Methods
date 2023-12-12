@@ -174,8 +174,6 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
                 df_pad['Weekend'] = df_pad['Weekend'].astype(int)
 
-                st.write(df_pad.dtypes)
-
                 # Verifique e trate valores ausentes se houver
                 if df_pad.isnull().sum().any():
                     st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
@@ -203,7 +201,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
                         st.markdown('---')
 
-                        st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
+                        st.subheader("Criando uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
                         crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
                         st.write(crosstab_result2)
 
@@ -225,6 +223,21 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 df_pad[variaveis_qtd] = df[variaveis_qtd]
                 df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
 
+                def converter_dados(df):
+                    # Converte as colunas uint8 para int64
+                    for col in ['Month_Dec', 'Month_Feb', 'Month_Jul', 'Month_June', 'Month_Mar', 'Month_May', 'Month_Nov']:
+                        df[col] = df[col].astype('int64')
+
+                    # Converte a coluna SpecialDay para one-hot encoding
+                    df = pd.get_dummies(df, columns=['SpecialDay'], dtype="int")
+
+
+                    return df
+
+                df_pad = converter_dados(df_pad)    
+
+                df_pad['Weekend'] = df_pad['Weekend'].astype(int)
+
                 st.write(df_pad.head())
 
                 # Verifique e trate valores ausentes se houver
@@ -232,7 +245,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
                 else:
                     # Verifique e trate valores não numéricos se houver
-                    if not np.issubdtype(df_pad.dtypes, np.number):
+                    if np.issubdtype(df_pad.dtypes, np.number):
                         st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
                     else:
                         scaler = StandardScaler()
