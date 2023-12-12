@@ -15,6 +15,12 @@ from scipy.cluster.hierarchy import dendrogram, linkage
 def uploaded_file(file):
     return pd.read_csv(file, infer_datetime_format=True, parse_dates=['Month'])
 
+@st.cache_data
+def criar_df_auxiliar(df):
+    df_pad = pd.DataFrame()
+    df_pad[variaveis_qtd] = df[variaveis_qtd]
+    df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+    return df_pad
 
 # Configuração da página
 def main():
@@ -63,11 +69,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     st.markdown("---")
     # Configuração das abas
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Carregando O Arquivo", "Tratamento Os Dados", "Gráficos", "Modelo De Clustering", "Método Do Cotovelo"])
-    def criar_df_auxiliar(df):
-        df_pad = pd.DataFrame()
-        df_pad[variaveis_qtd] = df[variaveis_qtd]
-        df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
-        return df_pad
+
         
     with tab1:
         st.write('Carregando O Arquivo')
