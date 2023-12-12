@@ -157,8 +157,18 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
                     df_pad[df_pad.columns[-len(variaveis_cat)+1:]] = df_pad[df_pad.columns[-len(variaveis_cat)+1:]].astype(int)
 
-                    # Converta a coluna 'Weekend' para numérica
-                    df_pad['Weekend'] = df_pad['Weekend'].astype(int)
+                    def converter_dados(df):
+                        # Converte as colunas uint8 para int64
+                        for col in ['Month_Dec', 'Month_Feb', 'Month_Jul', 'Month_June', 'Month_Mar', 'Month_May', 'Month_Nov']:
+                            df[col] = df[col].astype('int64')
+
+                        # Converte a coluna SpecialDay para one-hot encoding
+                        df = pd.get_dummies(df, columns=['SpecialDay'])
+
+                        return df
+
+
+                    df_pad = converter_dados(df_pad)            
 
                     st.write(df_pad.dtypes)
 
