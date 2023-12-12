@@ -112,6 +112,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
             df_pad = pd.DataFrame()
             df_pad[variaveis_qtd] = df[variaveis_qtd]
             df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+            writer.close()
             return df_pad
 
         # Criar DataFrame auxiliar
