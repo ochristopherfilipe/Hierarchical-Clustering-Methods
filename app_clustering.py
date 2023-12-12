@@ -144,18 +144,11 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
         variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
                         'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
         variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
-
-        @st.cache_data
-        def criar_df_auxiliar(df):
-            df_pad = pd.DataFrame()
-            df_pad[variaveis_qtd] = df[variaveis_qtd]
-            df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
-            return df_pad
         
-        
-                
-        # Criar DataFrame auxiliar
-        df_pad = criar_df_auxiliar(df)
+        df_pad = pd.DataFrame()
+        df_pad[variaveis_qtd] = df[variaveis_qtd]
+        df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)        
+    
 
         scaler = StandardScaler()
         df_pad_scaled = scaler.fit_transform(df_pad)
