@@ -162,9 +162,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         if not np.issubdtype(df_pad.dtypes, np.number):
                             st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
                         else:
-                                                # Converte a coluna 'Weekend' para inteiro (0 ou 1) se for do tipo booleano
-                            if df['Weekend'].dtype == bool:
-                                df['Weekend'] = df['Weekend'].astype(int, inplace=True)
+                            df_pad['Weekend'] = df_pad['Weekend'].astype(int, inplace=True)
                                 
                             scaler = StandardScaler()
                             df_pad_scaled = scaler.fit_transform(df_pad)
