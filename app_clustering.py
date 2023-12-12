@@ -137,148 +137,150 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 plt.title(f'Distribuição de {column}')
                 st.pyplot(plt)
             
-        with tab4:
-            st.title('Modelo De Clustering')
+        # ...
 
-            df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
+    with tab4:
+        st.title('Modelo De Clustering')
 
-            if file is not None:
-                df = uploaded_file(file)
+        df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
 
-                if not df.empty:  # Certifique-se de que o DataFrame não está vazio
-                    variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
-                                    'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
-                    variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
+        if file is not None:
+            df = uploaded_file(file)
 
-                    # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
-                    df_pad[variaveis_qtd] = df[variaveis_qtd]
+            if not df.empty:  # Certifique-se de que o DataFrame não está vazio
+                variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
+                                'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
+                variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
 
-                    # Adicione este trecho para converter as colunas criadas por pd.get_dummies para int
-                    df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
-                    df_pad[df_pad.columns[-len(variaveis_cat)+1:]] = df_pad[df_pad.columns[-len(variaveis_cat)+1:]].astype(int)
+                # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
+                df_pad[variaveis_qtd] = df[variaveis_qtd]
 
-                    def converter_dados(df):
-                        # Converte as colunas uint8 para int64
-                        for col in ['Month_Dec', 'Month_Feb', 'Month_Jul', 'Month_June', 'Month_Mar', 'Month_May', 'Month_Nov']:
-                            df[col] = df[col].astype('int64')
+                # Adicione este trecho para converter as colunas criadas por pd.get_dummies para int
+                df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+                df_pad[df_pad.columns[-len(variaveis_cat)+1:]] = df_pad[df_pad.columns[-len(variaveis_cat)+1:]].astype(int)
 
-                        # Converte a coluna SpecialDay para one-hot encoding
-                        df = pd.get_dummies(df, columns=['SpecialDay'])
+                def converter_dados(df):
+                    # Converte as colunas uint8 para int64
+                    for col in ['Month_Dec', 'Month_Feb', 'Month_Jul', 'Month_June', 'Month_Mar', 'Month_May', 'Month_Nov']:
+                        df[col] = df[col].astype('int64')
 
-                        return df
+                    # Converte a coluna SpecialDay para one-hot encoding
+                    df = pd.get_dummies(df, columns=['SpecialDay'])
+
+                    return df
+
+                df_pad = converter_dados(df_pad)            
+
+                st.write(df_pad.dtypes)
+
+                # Verifique e trate valores ausentes se houver
+                if df_pad.isnull().sum().any():
+                    st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
+                else:
+                    # Verifique e trate valores não numéricos se houver
+                    if not np.issubdtype(df_pad.dtypes, np.number):
+                        st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
+                    else:                                
+                        scaler = StandardScaler()
+                        df_pad_scaled = scaler.fit_transform(df_pad)
+
+                        # Configura o modelo de clustering hierárquico aglomerativo com linkage "complete", sem limite de distância e 3 clusters
+                        clus = AgglomerativeClustering(linkage="complete", distance_threshold=None, n_clusters=3)
+
+                        # Ajusta o modelo aos dados padronizados
+                        clus.fit(df_pad_scaled)
+
+                        # Adiciona a coluna 'grupo' ao DataFrame original 'df'
+                        df['grupo'] = clus.labels_
+
+                        # Mostrar tabela de hierarquia cruzada
+                        st.subheader("Cruzando a tabela de hierarquia com a venda ou nao venda da tabela 'Revenue'")
+                        crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+                        st.write(crosstab_result)
+
+                        st.markdown('---')
+
+                        st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
+                        crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
+                        st.write(crosstab_result2)
 
 
-                    df_pad = converter_dados(df_pad)            
+    with tab5:
+        st.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
 
-                    st.write(df_pad.dtypes)
+        df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
 
-                    # Verifique e trate valores ausentes se houver
-                    if df_pad.isnull().sum().any():
-                        st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
+        if file is not None:
+            df = uploaded_file(file)
+
+            if not df.empty:  # Certifique-se de que o DataFrame não está vazio
+                variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
+                                'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
+                variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
+
+                # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
+                df_pad[variaveis_qtd] = df[variaveis_qtd]
+                df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+
+                st.write(df_pad.head())
+
+                # Verifique e trate valores ausentes se houver
+                if df_pad.isnull().sum().any():
+                    st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
+                else:
+                    # Verifique e trate valores não numéricos se houver
+                    if not np.issubdtype(df_pad.dtypes, np.number):
+                        st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
                     else:
-                        # Verifique e trate valores não numéricos se houver
-                        if not np.issubdtype(df_pad.dtypes, np.number):
-                            st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
-                        else:                                
-                            scaler = StandardScaler()
-                            df_pad_scaled = scaler.fit_transform(df_pad)
+                        scaler = StandardScaler()
+                        df_pad_scaled = scaler.fit_transform(df_pad)
 
-                            # Configura o modelo de clustering hierárquico aglomerativo com linkage "complete", sem limite de distância e 3 clusters
-                            clus = AgglomerativeClustering(linkage="complete", distance_threshold=None, n_clusters=3)
+                        # Inicializa uma lista para armazenar as variabilidades intra-cluster para diferentes números de clusters
+                        inertia = []
 
-                            # Ajusta o modelo aos dados padronizados
-                            clus.fit(df_pad_scaled)
-
-                            # Adiciona a coluna 'grupo' ao DataFrame original 'df'
-                            df['grupo'] = clus.labels_
-
-                            # Mostrar tabela de hierarquia cruzada
-                            st.subheader("Cruzando a tabela de hierarquia com a venda ou nao venda da tabela 'Revenue'")
-                            crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
-                            st.write(crosstab_result)
-
-                            st.markdown('---')
-
-                            st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
-                            crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
-                            st.write(crosstab_result2)
-
-        with tab5:
-            st.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
-
-            df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
-
-            if file is not None:
-                df = uploaded_file(file)
-
-                if not df.empty:  # Certifique-se de que o DataFrame não está vazio
-                    variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
-                                    'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
-                    variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
-
-                    # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
-                    df_pad[variaveis_qtd] = df[variaveis_qtd]
-                    df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
-
-                    st.write(df_pad.head())
-
-                    # Verifique e trate valores ausentes se houver
-                    if df_pad.isnull().sum().any():
-                        st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
-                    else:
-                        # Verifique e trate valores não numéricos se houver
-                        if not np.issubdtype(df_pad.dtypes, np.number):
-                            st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
-                        else:
-                            scaler = StandardScaler()
-                            df_pad_scaled = scaler.fit_transform(df_pad)
-
-                            # Inicializa uma lista para armazenar as variabilidades intra-cluster para diferentes números de clusters
-                            inertia = []
-
-                            # Testa diferentes números de clusters (de 1 a 29) e calcula a variabilidade intra-cluster (inertia) para cada um
-                            for k in range(1, 30):
-                                # Configura o modelo KMeans com o número atual de clusters e uma semente aleatória para reprodutibilidade
-                                kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # Defina n_init explicitamente
-                                # Ajusta o modelo aos dados padronizados
-                                kmeans.fit(df_pad_scaled)
-                                # Armazena a variabilidade intra-cluster na lista
-                                inertia.append(kmeans.inertia_)
-
-                            # Plota o gráfico do método do cotovelo
-                            st.pyplot(plt.figure(figsize=(10, 6)))
-                            plt.plot(range(1, 30), inertia, marker='o')
-                            plt.xlabel('Número de Clusters')
-                            plt.ylabel('Inércia (Variabilidade Intra-cluster)')
-                            plt.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
-
-                            # Encontrar o índice do ponto de cotovelo
-                            elbow_index = 11  
-                            plt.axvline(x=elbow_index + 1, color='red', linestyle='--', label='Ponto de Cotovelo')  # +1 porque o índice começa em 0
-
-                            plt.legend()
-                            st.pyplot(plt)
-
-                            # Configura o modelo KMeans com 11 clusters e uma semente aleatória para reprodutibilidade
-                            kmeans = KMeans(n_clusters=11, random_state=42, n_init=10)
-
+                        # Testa diferentes números de clusters (de 1 a 29) e calcula a variabilidade intra-cluster (inertia) para cada um
+                        for k in range(1, 30):
+                            # Configura o modelo KMeans com o número atual de clusters e uma semente aleatória para reprodutibilidade
+                            kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)  # Defina n_init explicitamente
                             # Ajusta o modelo aos dados padronizados
                             kmeans.fit(df_pad_scaled)
+                            # Armazena a variabilidade intra-cluster na lista
+                            inertia.append(kmeans.inertia_)
 
-                            # Adiciona a coluna 'grupo' ao DataFrame original 'df'
-                            df['grupo'] = kmeans.labels_
+                        # Plota o gráfico do método do cotovelo
+                        st.pyplot(plt.figure(figsize=(10, 6)))
+                        plt.plot(range(1, 30), inertia, marker='o')
+                        plt.xlabel('Número de Clusters')
+                        plt.ylabel('Inércia (Variabilidade Intra-cluster)')
+                        plt.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
 
-                            # Crosstab
-                            crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+                        # Encontrar o índice do ponto de cotovelo
+                        elbow_index = 11  
+                        plt.axvline(x=elbow_index + 1, color='red', linestyle='--', label='Ponto de Cotovelo')  # +1 porque o índice começa em 0
 
-                            # Gráfico de barras agrupadas
-                            st.pyplot(plt.figure(figsize=(10, 6)))
-                            crosstab_result.plot(kind='bar', colormap='viridis')
-                            plt.title('Distribuição dos Grupos por Receita')
-                            plt.xlabel('Receita')
-                            plt.ylabel('Contagem')
-                            plt.legend(title='Grupo', bbox_to_anchor=(1.05, 1), loc='upper left')
-                            st.pyplot(plt)
+                        plt.legend()
+                        st.pyplot(plt)
+
+                        # Configura o modelo KMeans com 11 clusters e uma semente aleatória para reprodutibilidade
+                        kmeans = KMeans(n_clusters=11, random_state=42, n_init=10)
+
+                        # Ajusta o modelo aos dados padronizados
+                        kmeans.fit(df_pad_scaled)
+
+                        # Adiciona a coluna 'grupo' ao DataFrame original 'df'
+                        df['grupo'] = kmeans.labels_
+
+                        # Crosstab
+                        crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+
+                        # Gráfico de barras agrupadas
+                        st.pyplot(plt.figure(figsize=(10, 6)))
+                        crosstab_result.plot(kind='bar', colormap='viridis')
+                        plt.title('Distribuição dos Grupos por Receita')
+                        plt.xlabel('Receita')
+                        plt.ylabel('Contagem')
+                        plt.legend(title='Grupo', bbox_to_anchor=(1.05, 1), loc='upper left')
+                        st.pyplot(plt)
         
 # Roda o aplicativo
 if __name__ == "__main__":
