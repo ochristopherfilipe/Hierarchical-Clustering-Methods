@@ -61,7 +61,6 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
 
     st.markdown("---")
     st.markdown("---")
-    st.markdown("---")
     # Configuração das abas
     tab1, tab2, tab3, tab4, tab5 = st.tabs(["Carregando O Arquivo", "Tratamento Dos Dados", "Gráficos", "Modelo De Clustering", "Elbow Method"])
 
