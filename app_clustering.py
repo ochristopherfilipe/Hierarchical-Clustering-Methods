@@ -138,45 +138,52 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 st.pyplot(plt)
             
         with tab4:
-            st.title('Modelo De Clustering')
+    st.title('Modelo De Clustering')
 
-            df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
+    df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
 
-            if file is not None:
-                df = uploaded_file(file)
+    if file is not None:
+        df = uploaded_file(file)
 
-                if not df.empty:  # Certifique-se de que o DataFrame não está vazio
-                    variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
-                                    'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
-                    variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
+        if not df.empty:  # Certifique-se de que o DataFrame não está vazio
+            variaveis_qtd = ['Administrative', 'Administrative_Duration', 'Informational',
+                             'Informational_Duration', 'ProductRelated', 'ProductRelated_Duration']
+            variaveis_cat = ['SpecialDay', 'Month', 'Weekend']
 
-                    # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
-                    df_pad[variaveis_qtd] = df[variaveis_qtd]
-                    df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+            # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
+            df_pad[variaveis_qtd] = df[variaveis_qtd]
+            df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
 
+            # Verifique e trate valores ausentes se houver
+            if df_pad.isnull().sum().any():
+                st.warning("Existem valores ausentes no DataFrame. Por favor, trate-os antes de prosseguir.")
+            else:
+                # Verifique e trate valores não numéricos se houver
+                if not np.issubdtype(df_pad.dtypes, np.number):
+                    st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
+                else:
+                    scaler = StandardScaler()
+                    df_pad_scaled = scaler.fit_transform(df_pad)
 
-        scaler = StandardScaler()
-        df_pad_scaled = scaler.fit_transform(df_pad)
+                    # Configura o modelo de clustering hierárquico aglomerativo com linkage "complete", sem limite de distância e 3 clusters
+                    clus = AgglomerativeClustering(linkage="complete", distance_threshold=None, n_clusters=3)
 
-        # Configura o modelo de clustering hierárquico aglomerativo com linkage "complete", sem limite de distância e 3 clusters
-        clus = AgglomerativeClustering(linkage="complete", distance_threshold=None, n_clusters=3)
+                    # Ajusta o modelo aos dados padronizados
+                    clus.fit(df_pad_scaled)
 
-        # Ajusta o modelo aos dados padronizados
-        clus.fit(df_pad_scaled)
+                    # Adiciona a coluna 'grupo' ao DataFrame original 'df'
+                    df['grupo'] = clus.labels_
 
-        # Adiciona a coluna 'grupo' ao DataFrame original 'df'
-        df['grupo'] = clus.labels_
+                    # Mostrar tabela de hierarquia cruzada
+                    st.subheader("Cruzando a tabela de hierarquia com a venda ou nao venda da tabela 'Revenue'")
+                    crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+                    st.write(crosstab_result)
 
-        # Mostrar tabela de hierarquia cruzada
-        st.subheader("Cruzando a tabela de hierarquia com a venda ou nao venda da tabela 'Revenue'")
-        crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
-        st.write(crosstab_result)
+                    st.markdown('---')
 
-        st.markdown('---')
-
-        st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
-        crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
-        st.write(crosstab_result2)
+                    st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
+                    crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
+                    st.write(crosstab_result2)
 
         with tab5:
             st.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
