@@ -165,11 +165,8 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         df[col] = df[col].astype('int64')
 
                     # Converte a coluna SpecialDay para one-hot encoding
-                    df = pd.get_dummies(df, columns=['SpecialDay'])
+                    df = pd.get_dummies(df, columns=['SpecialDay'], dtype="int")
 
-                    # Converte as colunas criadas por pd.get_dummies para int
-                    for col in df.columns[-len(variaveis_cat):]:
-                        df[col] = df[col].astype(int)
 
                     return df
 
