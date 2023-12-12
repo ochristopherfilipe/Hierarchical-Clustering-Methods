@@ -154,31 +154,31 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
             df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
             return df_pad
         
-        # Criar DataFrame auxiliar
-        df_pad = criar_df_auxiliar(df)
-
-        scaler = StandardScaler()
-        df_pad_scaled = scaler.fit_transform(df_pad)
-
-        # Configura o modelo de clustering hierárquico aglomerativo com linkage "complete", sem limite de distância e 3 clusters
-        clus = AgglomerativeClustering(linkage="complete", distance_threshold=None, n_clusters=3)
-
-        # Ajusta o modelo aos dados padronizados
-        clus.fit(df_pad_scaled)
-
-        # Adiciona a coluna 'grupo' ao DataFrame original 'df'
-        df['grupo'] = clus.labels_
-
-        # Mostrar tabela de hierarquia cruzada
-        st.subheader("Cruzando a tabela de hierarquia com a venda ou nao venda da tabela 'Revenue'")
-        crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
-        st.write(crosstab_result)
-
-        st.markdown('---')
-
-        st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
-        crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
-        st.write(crosstab_result2)
+            # Criar DataFrame auxiliar
+            df_pad = criar_df_auxiliar(df)
+    
+            scaler = StandardScaler()
+            df_pad_scaled = scaler.fit_transform(df_pad)
+    
+            # Configura o modelo de clustering hierárquico aglomerativo com linkage "complete", sem limite de distância e 3 clusters
+            clus = AgglomerativeClustering(linkage="complete", distance_threshold=None, n_clusters=3)
+    
+            # Ajusta o modelo aos dados padronizados
+            clus.fit(df_pad_scaled)
+    
+            # Adiciona a coluna 'grupo' ao DataFrame original 'df'
+            df['grupo'] = clus.labels_
+    
+            # Mostrar tabela de hierarquia cruzada
+            st.subheader("Cruzando a tabela de hierarquia com a venda ou nao venda da tabela 'Revenue'")
+            crosstab_result = pd.crosstab(df['Revenue'], df['grupo'])
+            st.write(crosstab_result)
+    
+            st.markdown('---')
+    
+            st.subheader("Cria uma tabela de contingência explorando a relação entre os grupos, os sistemas operacionais e a variável de receita ('Revenue').")
+            crosstab_result2 = pd.crosstab([df['OperatingSystems'], df['Revenue']], df['grupo'])
+            st.write(crosstab_result2)
 
         with tab5:
             st.title('Método do Cotovelo para Determinar o Número Ótimo de Clusters')
