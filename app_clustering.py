@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -68,6 +69,10 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     with tab1:
         st.write('Carregando O Arquivo')
         file = st.file_uploader("Escolha um arquivo CSV", type=["csv"])
+
+        # Link abaixo do botão para baixar o dataset
+        st.sidebar.write("[Link para baixar o arquivo de dados](https://github.com/ochristopherfilipe/RFV)")
+
 
     with tab2:
         st.title('Tratamento Dos Dados')
@@ -209,6 +214,10 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
     with tab5:
         st.title('Elbow Method')
 
+        with st.spinner('Aguardando...'):
+            time.sleep(120)  # Exemplo de código que demora 5 segundos
+
+
         df_pad = pd.DataFrame()  # Inicialize o DataFrame df_pad
 
         if file is not None:
@@ -311,6 +320,11 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         plt.ylabel('Contagem')
                         plt.legend(title='Grupo', bbox_to_anchor=(1.05, 1), loc='upper left')
                         st.pyplot(plt)
+
+
+                    # O spinner desaparece quando o bloco de código dentro dele é concluído
+                    st.success('Concluído!')
+
         
 # Roda o aplicativo
 if __name__ == "__main__":
