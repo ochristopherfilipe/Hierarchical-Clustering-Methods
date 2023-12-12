@@ -114,9 +114,9 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                 # Criar DataFrame auxiliar
                 df_pad = criar_df_auxiliar(df)
 
-        # Exibir nomes das colunas
-        st.write("Nomes das Colunas no DataFrame Transformado:")
-        st.write(df_pad.columns.values)
+                # Exibir nomes das colunas
+                st.write("Nomes das Colunas no DataFrame Transformado:")
+                st.write(df_pad.columns.values)
 
     with tab3:
         st.title('Gráficos')
