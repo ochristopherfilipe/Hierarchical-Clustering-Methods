@@ -153,6 +153,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                     # Crie o DataFrame df_pad apenas se o DataFrame df não estiver vazio
                     df_pad[variaveis_qtd] = df[variaveis_qtd]
                     df_pad = pd.concat([df_pad, pd.get_dummies(df[variaveis_cat], drop_first=True)], axis=1)
+                    df_pad['Weekend'] = df_pad['Weekend'].astype(int, inplace=True)
 
                     st.write(df_pad.dtypes)
 
@@ -163,10 +164,7 @@ Nosso objetivo agora é agrupar as sessões de acesso ao portal considerando o c
                         # Verifique e trate valores não numéricos se houver
                         if not np.issubdtype(df_pad.dtypes, np.number):
                             st.warning("Existem colunas não numéricas no DataFrame. Por favor, remova ou trate essas colunas antes de prosseguir.")
-                        else:
-                                     
-                            df_pad['Weekend'] = df_pad['Weekend'].astype(int, inplace=True)
-                                
+                        else:                                
                             scaler = StandardScaler()
                             df_pad_scaled = scaler.fit_transform(df_pad)
 
